@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+{% include 'navbar.html' %}
+<head>
+    <style>
+        body {padding-top: 10px !important;
+            padding-right: 10px !important;
+            padding-bottom: 10px !important;
+            padding-left: 10px !important;}
+
+        .search{
+            margin-left: 20%;
+            margin-right: 20%;
+        }
+    </style>
+    <body>
+        <div class=search>
+         <form class="d-flex" action="/search" method="POST">
+            {% csrf_token%}
+            <input class="form-control" type="text" name="keyword" placeholder="Enter a value to search in ID, Name, Port Code columns">
+            <button class="btn btn-primary" type="submit">Search</button>
+          </form>
+        </div>
+        <br>
+        {% if all %}
+        <div class=row>
+        <table class="table table-bordered" style="width: 100%">
+            <thead class="thead-dark">
+                {% for key in head %}
+                    <th class="thead-dark " style="width: 10%">{{key}}</th>
+                {% endfor %}
+                <th>Edit/Delete</th>
+                {% for key, value in all.items %}
+                <tr>
+                    {% for i,j in value.items%}
+                        {% if 'maps' in j %}
+                            <td><a href={{j}} target="_blank">Click Here to view Map</a></td>
+                        {% elif 'Url' in i %}
+                            <td><a href=http://{{j}} target="_blank">{{j}}</a></td>
+                        {% else %}
+                            <td>{{j}}</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td><form action="/to_edit" method="POST">
+                        {% csrf_token%}
+                        <input class="form-control" value={{value.PortCode}} name=portcode style="visibility: hidden;" id="portcode">
+                        <button type=submit class="btn btn-primary">Edit</button>
+                        <button type="button" class="btn btn-primary" onclick="del('{{value.PortCode}}')">
+                            Delete
+                          </button>
+                    </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </thead>
+            </table>
+        </div>
+        {% else %}
+        <h1 align="center">NO DATA AVAILABLE</h1>
+        {% endif %}
+    </body>
+    <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form action="/delete" method="POST">
+                {% csrf_token%}
+            <p>Do you want to delete</p>
+            <input class="form-control" name=portcode id="modal_body">
+            
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    function del(val){
+        var name = $("#portcode").val();
+        var str = name
+        $("#modal_body").attr("value", name);
+        $('#exampleModal').modal();
+    }
+</script>
+</html>
