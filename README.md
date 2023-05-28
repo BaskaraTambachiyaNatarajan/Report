@@ -1,0 +1,1 @@
+Upload a CSV or JSON file which have data of Ports in all countries, we can View the data as Table. Also add new ports, delete/edit old ports. Using Latitude and Longitude of a port fetched location of that port using google maps.
